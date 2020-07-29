@@ -50,6 +50,31 @@ public class ModaiDB {
             Log.d("DB", "用户信息已经储存");
         }
     }
+    //修改用户信息状态
+    public void ChangeUserStatus(String name,int flag){
+        if (flag == 0) {
+            ContentValues values = new ContentValues();
+            values.put("status", 0);
+            db.update("User", values, "name=?", new String[]{name});
+        }else{
+            ContentValues values = new ContentValues();
+            values.put("status", 1);
+            db.update("User", values, "name=?", new String[]{name});
+        }
+        Log.d("用户信息","修改成功");
+    }
+    public boolean CheckUserexist(String name){
+        Cursor c = db.query("User",null,"name=?", new String[]{name},null,null,null);
+        if (c.getCount() == 0) {
+            Log.d("用户信息", "不存在");
+            return false;
+        }
+        else{
+            Log.d("用户信息", "存在");
+            return true;
+        }
+
+    }
     //显示用户信息
     public void Show_Userinfo(){
         Cursor c = db.query("User",null,null, null,null,null,null);
@@ -75,6 +100,7 @@ public class ModaiDB {
         c.close();
         return username;
     }
+    //返回一个体温请求数据的信息
 
     //储存蓝牙信息
     public void SavaBlueToothinfo(Bluetooth_info bluetooth_info){
@@ -111,6 +137,10 @@ public class ModaiDB {
             bluetooth_infoList.add(bluetooth_info);
         }
         return bluetooth_infoList;
+    }
+    //删除表中数据
+    public void deleteinfo(){
+        db.delete("Bluetooth",null,null);
     }
 
 }

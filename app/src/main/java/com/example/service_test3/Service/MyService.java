@@ -11,7 +11,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -19,14 +18,11 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.example.service_test3.R;
+import com.example.service_test3.activity.MainActivity;
 import com.example.service_test3.bluetooth.BlueTooth;
 import com.example.service_test3.bluetooth.BluetoothReceiver;
-import com.example.service_test3.activity.MainActivity;
 import com.example.service_test3.db.ModaiDB;
-import com.example.service_test3.db.MySQLiteOpenHelper;
-import com.example.service_test3.R;
-
-import java.io.File;
 
 public class MyService extends Service {
     private ModaiDB modaiDB;
@@ -92,7 +88,7 @@ public class MyService extends Service {
             }
         }).start();
         manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int anHour = 30* 1000;  // 这是一小时的毫秒数
+        int anHour = 300* 1000;  // 这是一小时的毫秒数
         long triggerAtTime = SystemClock.elapsedRealtime() + anHour;
         Intent alarmIntent = new Intent(this,MyService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);

@@ -76,11 +76,12 @@ public class object_json {
     }
 
     //获得用户信息的json数据
-    public static String get_User_Jsonstr(UserData data) throws JSONException, NoSuchAlgorithmException {
+    public static String get_Login_Jsonstr(UserData data,int type) throws JSONException, NoSuchAlgorithmException {
         JSONObject info = new JSONObject();
         info.put("name",data.getUserName());
         info.put("pwd",data.getUserPwd());
         info.put("usermac",data.getUserMac());
+        info.put("type",type);
         String str = data.getUserName()+"#"+data.getUserPwd();
         MessageDigest md5 = null;
         md5 = MessageDigest.getInstance("MD5");

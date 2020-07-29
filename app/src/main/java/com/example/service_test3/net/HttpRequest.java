@@ -43,7 +43,7 @@ public class HttpRequest {
 
 
 //发送POST请求体温信息
-public void Request_Temp(final List<Temp_return> mData, final HttpCallbackListener listener){
+public void Send_Request_Temp(final List<Temp_return> mData, final Request_Temp temp, final HttpCallbackListener listener){
     new Thread(new Runnable() {
         @Override
         public void run() {
@@ -72,7 +72,7 @@ public void Request_Temp(final List<Temp_return> mData, final HttpCallbackListen
                 //创建输出流
                 DataOutputStream out = new DataOutputStream(connection.getOutputStream());
                 //创建json格式的数据结构，为key-value结构
-                Request_Temp temp = new Request_Temp("2015082508","temp_check",10);
+//                Request_Temp temp = new Request_Temp(,"temp_check",10);
                 //把对象转化成json串
                 String json = object_json.get_temp_Jsonstr(temp);
                 System.out.println(json);
@@ -94,6 +94,7 @@ public void Request_Temp(final List<Temp_return> mData, final HttpCallbackListen
                     response.append(line);
                 }
                 User_tempinfo user_tempinfo = object_json.handleReturn_tempinfo(String.valueOf(response),mData);
+                System.out.println(user_tempinfo.getStatus());
                 if (user_tempinfo.getStatus() == 1000){
                     listener.onSuccess(response.toString());
                 }else{
@@ -116,7 +117,7 @@ public void Request_Temp(final List<Temp_return> mData, final HttpCallbackListen
         }
     }).start();
 }
-
+    //发送蓝牙信息
     public void Send_Bluetoothinfo(final ModaiDB modaiDB,final HttpCallbackListener listener) throws JSONException {
         new Thread(new Runnable() {
             @Override
@@ -178,8 +179,8 @@ public void Request_Temp(final List<Temp_return> mData, final HttpCallbackListen
             }
         }).start();
     }
-
-    public void Send_Login(final UserData data, final HttpCallbackListener listener){
+    //发送登录信息
+    public void Send_Login(final UserData data, final int type, final HttpCallbackListener listener){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -210,7 +211,7 @@ public void Request_Temp(final List<Temp_return> mData, final HttpCallbackListen
                     //创建json格式的数据结构，为key-value结构
 
                     //把对象转化成json串
-                    String json = object_json.get_User_Jsonstr(data);
+                    String json = object_json.get_Login_Jsonstr(data,type);
                     System.out.println(json);
                     out.writeBytes(json);
                     out.flush();
@@ -226,11 +227,12 @@ public void Request_Temp(final List<Temp_return> mData, final HttpCallbackListen
                         response.append(line);
                     }
                     Login_return ret = object_json.parsetoLogin_return(response.toString());
+                    System.out.println(ret.getMac());
                     //如果成功
                     if(ret.getStatus() == 1000){
                         data.setStatus(1);
                         if (listener != null ){
-                            listener.onSuccess(response.toString());
+                            listener.onSuccess(ret.getMac());
                         }
                     }else{
                         if (listener != null ){

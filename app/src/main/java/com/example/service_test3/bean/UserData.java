@@ -3,7 +3,7 @@ package com.example.service_test3.bean;
 public class UserData {
     private String userName;
     private String userPwd;
-    private String userMac;
+    private String userMac=" ";
     private int status ;
 
     public UserData(String userName, String userPwd, String userMac) {
@@ -11,6 +11,12 @@ public class UserData {
         this.userPwd = userPwd;
         this.userMac = userMac;
     }
+    public UserData(String userName, String userPwd) {
+        this.userName = userName;
+        this.userPwd = userPwd;
+
+    }
+
 
     public String getUserMac() {
         return userMac;
