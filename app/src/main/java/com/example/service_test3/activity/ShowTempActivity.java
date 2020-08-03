@@ -62,8 +62,6 @@ public class ShowTempActivity extends AppCompatActivity {
                 });
             }
         });
-        mData.add(new Temp_return("12.1",12313,"南二门",R.drawable.denglu));
-        mData.add(new Temp_return("12.1",12313,"南二门",R.drawable.denglu));
         mAdapter = new TempAdapter(mContext,mData);
         listView.setAdapter(mAdapter);
 

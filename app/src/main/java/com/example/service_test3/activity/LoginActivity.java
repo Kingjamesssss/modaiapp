@@ -97,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             final String userName = mAccount.getText().toString().trim();    //获取当前输入的用户名和密码信息
             String userPwd = mPwd.getText().toString().trim();
-            LoginCheck loginCheck = new LoginCheck(modaiDB,userName);//判断是否登录
+            LoginCheck loginCheck = new LoginCheck(modaiDB);//判断是否登录
             if(!loginCheck.isLogined()) {
                 userData = new UserData(userName, userPwd);
                 httpRequest = new HttpRequest();

@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean Loginexit() {
-        LoginCheck loginCheck = new LoginCheck(modaiDB,username);
+        LoginCheck loginCheck = new LoginCheck(modaiDB);
         boolean check = loginCheck.isLogined();
         if (check) {
             loginCheck.onLoginedClick();

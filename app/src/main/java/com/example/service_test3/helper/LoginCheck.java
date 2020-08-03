@@ -1,18 +1,14 @@
 package com.example.service_test3.helper;
 
-import android.app.Activity;
-import android.view.View;
-
 import com.example.service_test3.callback.LogincheckListener;
 import com.example.service_test3.db.ModaiDB;
 
 public class LoginCheck implements LogincheckListener {
     private ModaiDB modaiDB;
-    private String name;
 
-    public LoginCheck(ModaiDB modaiDB,String name) {
+    public LoginCheck(ModaiDB modaiDB) {
         this.modaiDB = modaiDB;
-        this.name = name;
+
     }
 
     @Override
@@ -28,6 +24,7 @@ public class LoginCheck implements LogincheckListener {
 
     @Override
     public boolean onLoginedClick() {
+        String name = modaiDB.get_Username();
         modaiDB.ChangeUserStatus(name,0);
         return true;
     }
