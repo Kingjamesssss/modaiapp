@@ -5,6 +5,7 @@ public class UserData {
     private String userPwd;
     private String userMac=" ";
     private int status ;
+    private String cid="";
 
     public UserData(String userName, String userPwd, String userMac) {
         this.userName = userName;
@@ -17,6 +18,13 @@ public class UserData {
 
     }
 
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
 
     public String getUserMac() {
         return userMac;

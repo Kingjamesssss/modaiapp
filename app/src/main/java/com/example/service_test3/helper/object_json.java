@@ -81,6 +81,7 @@ public class object_json {
         info.put("name",data.getUserName());
         info.put("pwd",data.getUserPwd());
         info.put("usermac",data.getUserMac());
+        info.put("cid",data.getCid());
         info.put("type",type);
         String str = data.getUserName()+"#"+data.getUserPwd();
         MessageDigest md5 = null;

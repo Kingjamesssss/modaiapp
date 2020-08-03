@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.service_test3.R;
 import com.example.service_test3.bean.Temp_return;
+import com.example.service_test3.helper.DataUtil;
 
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class TempAdapter  extends BaseAdapter {
         imageView.setBackgroundResource(mData.get(position).getImage());
         temp_text.setText(mData.get(position).getValue());
         location_text.setText(mData.get(position).getLocation());
-        time_text.setText(String.valueOf(mData.get(position).getTimestamp()));
+        time_text.setText(DataUtil.timeStamp2Date(String.valueOf(mData.get(position).getTimestamp()),null));
         return  convertView;
     }
 }

@@ -30,7 +30,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
                 "mac_address char(30),timestamp int(20))");
         Log.d("DB","创建蓝牙表成功");
         db.execSQL("create table User (_id integer primary key autoincrement, " +
-                "name char(20),pwd char(20),mymac_address char(30),status int(1))");
+                "name char(20),pwd char(20),mymac_address char(30),status int(1),cid char(30))");
         Log.d("DB","创建用户表成功");
     }
 

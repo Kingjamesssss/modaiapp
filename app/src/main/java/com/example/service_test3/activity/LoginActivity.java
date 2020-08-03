@@ -17,10 +17,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.service_test3.R;
+import com.example.service_test3.Service.IntentServiceDemo;
 import com.example.service_test3.bean.UserData;
 import com.example.service_test3.callback.HttpCallbackListener;
 import com.example.service_test3.db.ModaiDB;
-import com.example.service_test3.net.*;
+import com.example.service_test3.helper.LoginCheck;
+import com.example.service_test3.net.HttpRequest;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     public int pwdresetFlag=0;
@@ -37,7 +42,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView loginSuccessShow;
     private HttpRequest httpRequest;
     private ModaiDB modaiDB;
-    private AlertDialog.Builder dialog;//
     private UserData userData;
 
     @Override
@@ -69,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         };
+
 //        mymac_address = intent.getStringExtra("mymac_address");
 //        assert mymac_address != null;
 //        Log.d("mymac",mymac_address);
@@ -82,7 +87,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 login();
                 break;
             case R.id.login_btn_cancle:                             //登录界面的注销按钮
-
                 break;
             default:
                 break;
@@ -93,35 +97,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             final String userName = mAccount.getText().toString().trim();    //获取当前输入的用户名和密码信息
             String userPwd = mPwd.getText().toString().trim();
-            userData = new UserData(userName,userPwd);
-            httpRequest = new HttpRequest();
-            httpRequest.Send_Login(userData,0,new HttpCallbackListener() {
-                @Override
-                public void onSuccess(String response) {
+            LoginCheck loginCheck = new LoginCheck(modaiDB,userName);//判断是否登录
+            if(!loginCheck.isLogined()) {
+                userData = new UserData(userName, userPwd);
+                httpRequest = new HttpRequest();
+                httpRequest.Send_Login(userData, 0, new HttpCallbackListener() {
+                    @Override
+                    public void onSuccess(String response) {
 //                    Toast.makeText(LoginActivity.this, "登陆成功",
 //                            Toast.LENGTH_SHORT).show();
-                    //输入用户名和密码正确，判断是否绑定了mac地址
-                    if(response.equals("exist")){
-                        if (modaiDB.CheckUserexist(userName)) {
-                            modaiDB.ChangeUserStatus(userName, 1);
+                        //输入用户名和密码正确，判断是否绑定了mac地址
+                        if (response.equals("exist")) {
+                            if (modaiDB.CheckUserexist(userName)) {
+                                modaiDB.ChangeUserStatus(userName, 1);
 
+                            } else
+                                modaiDB.SaveUserinfo(userData);
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("username", userName);
+                            startActivity(intent);
+                        } else {
+                            handler.post(Bindmac_check_Dialog);
                         }
-                        else
-                            modaiDB.SaveUserinfo(userData);
-                        Intent intent  = new Intent(LoginActivity.this,MainActivity.class);
-                        intent.putExtra("username",userName);
-                        startActivity(intent);
-                    }else{
-                        handler.post(Bindmac_Dialog);
                     }
-                }
 
 
-                @Override
-                public void onError() {
-                    Log.d("login","失败");
-                }
-            });
+                    @Override
+                    public void onError() {
+                        Log.d("login", "失败");
+                    }
+                });
+            }else{
+                handler.post(Login_dialog);
+            }
         }
     }
 
@@ -141,12 +149,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void run() {
             //先通过 AlertDialog.Builder创建出一个 AlertDialog的实例.
-            dialog = new AlertDialog.Builder (LoginActivity.this);
+            View v=getLayoutInflater().inflate(R.layout.dialog,null);
+            AlertDialog.Builder dialog = new AlertDialog.Builder (LoginActivity.this);
             //然后为这个对话框设 置标题、内容、可否取消等属性
-            final EditText et = new EditText(LoginActivity.this);
-            dialog.setTitle("绑定mac地址");
-            dialog.setMessage("请输入.");
-            dialog.setView(et);
+            final EditText et = (EditText)v.findViewById(R.id.edittext_dialog);
+            dialog.setView(v);
             // 接下来调用 setPositiveButton()方法为对话框设置确定按钮点击事件
             dialog.setPositiveButton("OK", new DialogInterface. OnClickListener() {
                 public void onClick(DialogInterface dialog, int which)
@@ -154,6 +161,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     String mac = et.getText().toString();
                     System.out.println(mac);
                     userData.setUserMac(mac);
+                    userData.setCid(IntentServiceDemo.clientid);
                     httpRequest.Send_Login(userData,1, new HttpCallbackListener() {
                         @Override
                         public void onSuccess(String response) {
@@ -180,58 +188,49 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             dialog.setNegativeButton("Cancel", new DialogInterface. OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                    dialog.dismiss();
                 }
             });
             //最后调用 show()方法 将对话框显示出来。
             dialog.show();
         }
     };
-/*    private void Bindmac_Dialog(){
-        //先通过 AlertDialog.Builder创建出一个 AlertDialog的实例.
-        dialog = new AlertDialog.Builder (this);
-        //然后为这个对话框设 置标题、内容、可否取消等属性
-        final EditText et = new EditText(this);
-        dialog.setTitle("绑定mac地址");
-        dialog.setMessage("请输入.");
-        dialog.setView(et);
-        // 接下来调用 setPositiveButton()方法为对话框设置确定按钮点击事件
-        dialog.setPositiveButton("OK", new DialogInterface. OnClickListener() {
-            public void onClick(DialogInterface dialog, int which)
-            {
-                userData.setUserMac(et.getText().toString());
-                httpRequest.Send_Login(userData,1, new HttpCallbackListener() {
-                    @Override
-                    public void onSuccess(String response) {
-                        if (modaiDB.CheckUserexist(userData.getUserName())) {
-                            modaiDB.ChangeUserStatus(userData.getUserName(), 1);
 
+    Runnable Bindmac_check_Dialog = new Runnable() {
+        @Override
+        public void run() {
+            new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("您还未绑定MAC地址")
+                    .setContentText("请先绑定")
+                    .setCancelText("不绑定了")
+                    .setConfirmText("好的")
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener(){
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            handler.post(Bindmac_Dialog);
                         }
-                        else
-                            modaiDB.SaveUserinfo(userData);
-                        Intent intent  = new Intent(LoginActivity.this,MainActivity.class);
-                        intent.putExtra("username",userData.getUserName());
-                        startActivity(intent);
-                    }
-
-
-                    @Override
-                    public void onError() {
-                        Log.d("login","失败");
-                    }
-                });
-            }
-        });
-        //调用 setNegativeButton()方法设置取消按钮的点击事件。
-        dialog.setNegativeButton("Cancel", new DialogInterface. OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        //最后调用 show()方法 将对话框显示出来。
-        dialog.show();
-    }*/
+                    })
+                    .show();
+        }
+    };
+    Runnable Login_dialog = new Runnable() {
+        @Override
+        public void run() {
+            new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("您已经登录")
+                    .setContentText("请退出当前账号")
+                    .setConfirmText("好的")
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener(){
+                        @Override
+                        public void onClick(SweetAlertDialog sDialog) {
+                            sDialog.cancel();
+                        }
+                    })
+                    .show();
+        }
+    };
     @Override
     protected void onResume() {
         super.onResume();

@@ -21,6 +21,7 @@
         android:required="true" />
 
     <application
+        android:name=".Application"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,6 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        tools:replace="icon"
         tools:targetApi="m">
         <activity android:name=".activity.ShowTempActivity"></activity>
         <activity android:name=".activity.LoginActivity" />
@@ -36,6 +38,15 @@
             android:name=".Service.MyService"
             android:enabled="true"
             android:exported="true" />
+        <!-- 请根据您当前自定义的 PushService 名称路径进行配置-->
+        <service
+            android:name="com.example.service_test3.Service.PushServiceDemo"
+            android:exported="true"
+            android:label="PushService"
+            android:process=":pushservice"/>
+        <service
+            android:name="com.example.service_test3.Service.IntentServiceDemo"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <activity android:name=".activity.MainActivity">
             <intent-filter>

@@ -98,6 +98,7 @@ public class ModaiDB {
             }while (c.moveToNext());
         }
         c.close();
+
         return username;
     }
     //返回一个体温请求数据的信息
